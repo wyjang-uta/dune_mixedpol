@@ -1,3 +1,0 @@
-/exp/dune/app/users/wyjang/dune_mixedpol/dipole/build/CMakeFiles/exampleB1.dir
-/exp/dune/app/users/wyjang/dune_mixedpol/dipole/build/CMakeFiles/edit_cache.dir
-/exp/dune/app/users/wyjang/dune_mixedpol/dipole/build/CMakeFiles/rebuild_cache.dir
