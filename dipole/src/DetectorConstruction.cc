@@ -18,8 +18,10 @@
 #include "G4ChordFinder.hh"
 #include "G4NystromRK4.hh"
 #include "G4ClassicalRK4.hh"
+#include "G4DormandPrince745.hh"
 #include "G4Mag_UsualEqRhs.hh"
 #include "G4UniformMagField.hh"
+#include "G4UserLimits.hh"
 
 // Visualization
 #include "G4VisAttributes.hh"
@@ -65,21 +67,21 @@ G4VPhysicalVolume* DetectorConstruction::Construct()
   // instead construct dipoles
   ConstructDipoleA(logicWorld);
   ConstructDipoleB(logicWorld);
+  ConstructDipoleC(logicWorld);
 
   // (Optional) Additional geometry components can be constructed here
 
   return physWorld;
 }
 
-
 void DetectorConstruction::ConstructWorld(G4VPhysicalVolume*& physWorld)
 {
   G4NistManager* nist = G4NistManager::Instance();
 
-  G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
+  G4Material* world_mat = nist->FindOrBuildMaterial("G4_Galactic");
 
-  G4double world_size_xy = 2.0 * m;
-  G4double world_size_z = 1200.0 * m;
+  G4double world_size_xy = 20.0 * m;
+  G4double world_size_z = 300.0 * m;
   G4Box* solidWorld = new G4Box("SolidWorld",
                                 0.5 * world_size_xy,
                                 0.5 * world_size_xy,
@@ -113,8 +115,10 @@ void DetectorConstruction::ConstructTarget(G4LogicalVolume* logicWorld)
   G4LogicalVolume* logicTarget = new G4LogicalVolume(solidTarget,
                                                      target_mat,
                                                      "LogicTarget");
+  G4double world_z_halflen = dynamic_cast<G4Box*>(logicWorld->GetSolid())->GetZHalfLength();
+  G4double zpos = -world_z_halflen + solidTarget->GetZHalfLength();
   new G4PVPlacement(0,
-                    G4ThreeVector(0., 0., 0. * cm),
+                    G4ThreeVector(0., 0., zpos),
                     logicTarget,
                     "PhysTarget",
                     logicWorld,
@@ -218,7 +222,7 @@ void DetectorConstruction::ConstructHornA(G4LogicalVolume* logicWorld)
 
   G4Mag_UsualEqRhs* equationOfMotion = new G4Mag_UsualEqRhs(fMagFieldA);
   G4MagIntegratorStepper* stepper = new G4NystromRK4(equationOfMotion);
-  G4double minStep = 0.01 * mm; // 최소 스텝
+  G4double minStep = 0.5 * mm; // 최소 스텝
   G4ChordFinder* chordFinder = new G4ChordFinder(fMagFieldA, minStep, stepper);
   chordFinder->SetDeltaChord(0.1 * mm);
   fFieldMgrA->SetChordFinder(chordFinder);
@@ -353,7 +357,7 @@ void DetectorConstruction::ConstructHornB(G4LogicalVolume* logicWorld)
   fFieldMgrB->SetDetectorField(fMagFieldB);
   G4Mag_UsualEqRhs* equationOfMotion = new G4Mag_UsualEqRhs(fMagFieldB);
   G4MagIntegratorStepper* stepper = new G4NystromRK4(equationOfMotion);
-  G4double minStep = 0.01 * mm; // 최소 스텝
+  G4double minStep = 0.5 * mm; // 최소 스텝
   G4ChordFinder* chordFinder = new G4ChordFinder(fMagFieldB, minStep, stepper);
   chordFinder->SetDeltaChord(0.1 * mm);
   fFieldMgrB->SetChordFinder(chordFinder);
@@ -492,7 +496,7 @@ void DetectorConstruction::ConstructHornC(G4LogicalVolume* logicWorld)
   fFieldMgrC->SetDetectorField(fMagFieldC);
   G4Mag_UsualEqRhs* equationOfMotion = new G4Mag_UsualEqRhs(fMagFieldC);
   G4MagIntegratorStepper* stepper = new G4NystromRK4(equationOfMotion);
-  G4double minStep = 0.01 * mm; // 최소 스텝
+  G4double minStep = 0.5 * mm; // 최소 스텝
   G4ChordFinder* chordFinder = new G4ChordFinder(fMagFieldC, minStep, stepper);
   chordFinder->SetDeltaChord(0.1 * mm);
   fFieldMgrC->SetChordFinder(chordFinder);
@@ -525,92 +529,133 @@ void DetectorConstruction::ConstructDipoleA(G4LogicalVolume* logicWorld) {
   G4double sizeXY = 50.0 * cm;
   G4double sizeZ = 50.0 * cm;
   G4NistManager* nist = G4NistManager::Instance();
-  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_He");
+  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_Galactic");
+
+  // Create dipole volume
   G4Box* solidDipole = new G4Box("DipoleA_SV", sizeXY/2.0, sizeXY/2.0, sizeZ/2.0);
   G4LogicalVolume* logicDipole = new G4LogicalVolume(solidDipole, helium_mat, "DipoleA_LV");
-  G4double zPos = 280.0 * cm + sizeZ/2.0;
-  new G4PVPlacement(0, G4ThreeVector(0,0,zPos), logicDipole, "DipoleA_PV", logicWorld, false, 0);
+  G4double world_z_halflen = dynamic_cast<G4Box*>(logicWorld->GetSolid())->GetZHalfLength();
+  G4double zpos = -world_z_halflen + 1.5 * m + 0.5 * m + solidDipole->GetZHalfLength();
+  new G4PVPlacement(0, G4ThreeVector(0,0,zpos), logicDipole, "DipoleA_PV", logicWorld, false, 0);
 
   // uniform magnetic field
-  G4UniformMagField* magField = new G4UniformMagField(G4ThreeVector(0.0, 1.5 * tesla, 0.0));
+  G4double angleDeg = 0.0;
+  G4double angleRad = angleDeg * (CLHEP::pi/180.0);
+  G4double Bmag = fBFieldVal;
+  G4double Bx = Bmag * std::sin(angleRad);
+  G4double By = Bmag * std::cos(angleRad);
+  G4double Bz = 0.0;
+  G4UniformMagField* magField = new G4UniformMagField(G4ThreeVector(Bx, By, Bz));
 
   G4FieldManager* fieldMgr = new G4FieldManager();
   fieldMgr->SetDetectorField(magField);
   G4Mag_UsualEqRhs* fEquation = new G4Mag_UsualEqRhs(magField);
   G4MagIntegratorStepper* fStepper = new G4ClassicalRK4(fEquation);
-  G4double minStep = 0.01 * mm;
+  //G4MagIntegratorStepper* fStepper = new G4DormandPrince745(fEquation);
+  G4double minStep = 0.5 * mm;
 
   G4ChordFinder* fChordFinder = new G4ChordFinder(magField, minStep, fStepper);
   fieldMgr->SetChordFinder(fChordFinder);
 
-  fieldMgr->SetDeltaOneStep(0.05 * mm);
-  fieldMgr->SetDeltaIntersection(0.01 * mm);
+  fieldMgr->SetDeltaOneStep(0.5 * mm);
+  fieldMgr->SetDeltaIntersection(0.1 * mm);
 
   logicDipole->SetFieldManager(fieldMgr, true);
 
   // --- VisAttributes
   G4VisAttributes* visAttrInner = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5)); // Grey
   logicDipole->SetVisAttributes(visAttrInner);
+
+  // --- Step Limiter (optional)
+  G4UserLimits* userLimits = new G4UserLimits();
+  userLimits->SetMaxAllowedStep(10.0 * mm);
+  logicDipole->SetUserLimits(userLimits);
 }
 
 void DetectorConstruction::ConstructDipoleB(G4LogicalVolume* logicWorld) {
   G4double sizeXY = 50.0 * cm;
   G4double sizeZ = 50.0 * cm;
   G4NistManager* nist = G4NistManager::Instance();
-  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_He");
-  G4Box* solidDipole = new G4Box("DipoleA_SV", sizeXY/2.0, sizeXY/2.0, sizeZ/2.0);
-  G4LogicalVolume* logicDipole = new G4LogicalVolume(solidDipole, helium_mat, "DipoleA_LV");
-  G4double zPos = 370.0 * cm + sizeZ/2.0;
-  new G4PVPlacement(0, G4ThreeVector(0,0,zPos), logicDipole, "DipoleA_PV", logicWorld, false, 0);
+  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_Galactic");
+  G4Box* solidDipole = new G4Box("DipoleB_SV", sizeXY/2.0, sizeXY/2.0, sizeZ/2.0);
+  G4LogicalVolume* logicDipole = new G4LogicalVolume(solidDipole, helium_mat, "DipoleB_LV");
+  G4double world_z_halflen = dynamic_cast<G4Box*>(logicWorld->GetSolid())->GetZHalfLength();
+  G4double zpos = -world_z_halflen + 1.5 * m + 0.5 * m + solidDipole->GetZHalfLength() * 2.0 + 0.5 * m + solidDipole->GetZHalfLength();
+  new G4PVPlacement(0, G4ThreeVector(0,0,zpos), logicDipole, "DipoleB_PV", logicWorld, false, 0);
 
   // uniform magnetic field
-  G4UniformMagField* magField = new G4UniformMagField(G4ThreeVector(1.5 * tesla, 0.0, 0.0));
+  G4double angleDeg = 120.0;
+  G4double angleRad = angleDeg * (CLHEP::pi/180.0);
+  G4double Bmag = fBFieldVal;
+  G4double Bx = Bmag * std::sin(angleRad);
+  G4double By = Bmag * std::cos(angleRad);
+  G4double Bz = 0.0;
+  G4UniformMagField* magField = new G4UniformMagField(G4ThreeVector(Bx, By, Bz));
 
   G4FieldManager* fieldMgr = new G4FieldManager();
   fieldMgr->SetDetectorField(magField);
   G4Mag_UsualEqRhs* fEquation = new G4Mag_UsualEqRhs(magField);
   G4MagIntegratorStepper* fStepper = new G4ClassicalRK4(fEquation);
-  G4double minStep = 0.01 * mm;
+  //G4MagIntegratorStepper* fStepper = new G4DormandPrince745(fEquation);
+  G4double minStep = 0.5 * mm;
 
   G4ChordFinder* fChordFinder = new G4ChordFinder(magField, minStep, fStepper);
   fieldMgr->SetChordFinder(fChordFinder);
 
-  fieldMgr->SetDeltaOneStep(0.05 * mm);
-  fieldMgr->SetDeltaIntersection(0.01 * mm);
+  fieldMgr->SetDeltaOneStep(0.5 * mm);
+  fieldMgr->SetDeltaIntersection(0.1 * mm);
 
   logicDipole->SetFieldManager(fieldMgr, true);
   // --- VisAttributes
   G4VisAttributes* visAttrInner = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5)); // Grey
   logicDipole->SetVisAttributes(visAttrInner);
+
+  // --- Step Limiter (optional)
+  G4UserLimits* userLimits = new G4UserLimits();
+  userLimits->SetMaxAllowedStep(10.0 * mm);
+  logicDipole->SetUserLimits(userLimits);
 }
 
 void DetectorConstruction::ConstructDipoleC(G4LogicalVolume* logicWorld) {
   G4double sizeXY = 50.0 * cm;
   G4double sizeZ = 50.0 * cm;
   G4NistManager* nist = G4NistManager::Instance();
-  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_He");
-  G4Box* solidDipole = new G4Box("DipoleA_SV", sizeXY/2.0, sizeXY/2.0, sizeZ/2.0);
-  G4LogicalVolume* logicDipole = new G4LogicalVolume(solidDipole, helium_mat, "DipoleA_LV");
-  G4double zPos = 1747.8 * cm + sizeZ/2.0;
-  new G4PVPlacement(0, G4ThreeVector(0,0,zPos), logicDipole, "DipoleA_PV", logicWorld, false, 0);
+  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_Galactic");
+  G4Box* solidDipole = new G4Box("DipoleC_SV", sizeXY/2.0, sizeXY/2.0, sizeZ/2.0);
+  G4LogicalVolume* logicDipole = new G4LogicalVolume(solidDipole, helium_mat, "DipoleC_LV");
+  G4double world_z_halflen = dynamic_cast<G4Box*>(logicWorld->GetSolid())->GetZHalfLength();
+  G4double zpos = -world_z_halflen + 1.5 * m + 0.5 * m + solidDipole->GetZHalfLength() * 2.0 + 0.5 * m + solidDipole->GetZHalfLength() * 2.0 + 0.5 * m + solidDipole->GetZHalfLength();
+  new G4PVPlacement(0, G4ThreeVector(0,0,zpos), logicDipole, "DipoleC_PV", logicWorld, false, 0);
 
   // uniform magnetic field
-  G4UniformMagField* magField = new G4UniformMagField(G4ThreeVector(0.0, 1.5 * tesla, 0.0));
+  G4double angleDeg = 240.0;
+  G4double angleRad = angleDeg * (CLHEP::pi/180.0);
+  G4double Bmag = fBFieldVal;
+  G4double Bx = Bmag * std::sin(angleRad);
+  G4double By = Bmag * std::cos(angleRad);
+  G4double Bz = 0.0;
+  G4UniformMagField* magField = new G4UniformMagField(G4ThreeVector(Bx, By, Bz));
 
   G4FieldManager* fieldMgr = new G4FieldManager();
   fieldMgr->SetDetectorField(magField);
   G4Mag_UsualEqRhs* fEquation = new G4Mag_UsualEqRhs(magField);
-  G4MagIntegratorStepper* fStepper = new G4ClassicalRK4(fEquation);
-  G4double minStep = 0.01 * mm;
+  G4MagIntegratorStepper* fStepper = new G4ClassicalRK4(fEquation); 
+  //G4MagIntegratorStepper* fStepper = new G4DormandPrince745(fEquation);
+  G4double minStep = 0.5 * mm;
 
   G4ChordFinder* fChordFinder = new G4ChordFinder(magField, minStep, fStepper);
   fieldMgr->SetChordFinder(fChordFinder);
 
-  fieldMgr->SetDeltaOneStep(0.05 * mm);
-  fieldMgr->SetDeltaIntersection(0.01 * mm);
+  fieldMgr->SetDeltaOneStep(0.5 * mm);
+  fieldMgr->SetDeltaIntersection(0.1 * mm);
 
   logicDipole->SetFieldManager(fieldMgr, true);
   // --- VisAttributes
   G4VisAttributes* visAttrInner = new G4VisAttributes(G4Colour(0.5, 0.5, 0.5)); // Grey
   logicDipole->SetVisAttributes(visAttrInner);
+
+  // --- Step Limiter (optional)
+  G4UserLimits* userLimits = new G4UserLimits();
+  userLimits->SetMaxAllowedStep(10.0 * mm);
+  logicDipole->SetUserLimits(userLimits);
 }

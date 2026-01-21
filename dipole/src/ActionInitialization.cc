@@ -36,10 +36,14 @@
 
 namespace B1
 {
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 ActionInitialization::ActionInitialization(G4String fileName)
-  : G4VUserActionInitialization(), fFileName(fileName)
-{}
+  : G4VUserActionInitialization(),
+    fFileName(fileName)
+{
+
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

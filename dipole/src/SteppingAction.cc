@@ -61,43 +61,66 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
     auto analysisManager = G4AnalysisManager::Instance();
     G4Track* track = step->GetTrack();
 
-    if (track->GetDefinition()->GetParticleName() == "pi+" ||
-        track->GetDefinition()->GetParticleName() == "pi-" ||
-        track->GetDefinition()->GetParticleName() == "K+" ||
-        track->GetDefinition()->GetParticleName() == "K-" )
+    G4StepPoint* postPoint = step->GetPostStepPoint();
+
+    // Find out parent particle that produces neutrinos
+    if( postPoint->GetProcessDefinedStep() &&
+        postPoint->GetProcessDefinedStep()->GetProcessName() == "Decay" )
     {
-      if (step->GetPostStepPoint()->GetProcessDefinedStep()->GetProcessName() == "Decay") {
-        analysisManager->FillNtupleSColumn(0, track->GetDefinition()->GetParticleName());
-        analysisManager->FillNtupleSColumn(1, track->GetCreatorProcess()->GetProcessName());
-        analysisManager->FillNtupleDColumn(2, track->GetKineticEnergy()/CLHEP::GeV);
-        analysisManager->FillNtupleDColumn(3, track->GetTotalEnergy()/CLHEP::GeV);
-        analysisManager->FillNtupleDColumn(4, track->GetMomentum().getX()/CLHEP::GeV);
-        analysisManager->FillNtupleDColumn(5, track->GetMomentum().getY()/CLHEP::GeV);
-        analysisManager->FillNtupleDColumn(6, track->GetMomentum().getZ()/CLHEP::GeV);
-        analysisManager->FillNtupleDColumn(7, track->GetPosition().getX()/CLHEP::cm);
-        analysisManager->FillNtupleDColumn(8, track->GetPosition().getY()/CLHEP::cm);
-        analysisManager->FillNtupleDColumn(9, track->GetPosition().getZ()/CLHEP::cm);
-        analysisManager->AddNtupleRow();
+      const std::vector<const G4Track*>* secondaries = step->GetSecondaryInCurrentStep();
+
+      // Parent particle info
+      G4int parentPDG = track->GetDefinition()->GetPDGEncoding();
+      G4ThreeVector parentMom = track->GetMomentum();
+      G4double parentE = track->GetTotalEnergy();
+      G4ThreeVector decayPos = track->GetPosition();
+
+      for (size_t i = 0; i < secondaries->size(); ++i) {
+        const G4Track* secTrack = (*secondaries)[i];
+        G4int secPDG = secTrack->GetDefinition()->GetPDGEncoding();
+        G4String partName = secTrack->GetDefinition()->GetParticleName();
+
+        //if( G4StrUtil::contains(partName, "nu") || G4StrUtil::contains(partName,"anti_nu") ) {
+        if( partName.contains("nu") || partName.contains("anti_nu") ) {
+          G4ThreeVector nuMom = secTrack->GetMomentum();
+          G4double x_proj = -9999.0 / CLHEP::m;
+          G4double y_proj = -9999.0 / CLHEP::m;
+
+          // Calculate projection at 574 m
+          if( nuMom.getZ() > 0.0) {
+            G4double z_target = 574.0 * CLHEP::m;
+            G4double deltaZ = z_target - decayPos.z() / CLHEP::m;
+            x_proj = decayPos.x() / CLHEP::m + nuMom.getX()/nuMom.getZ() * deltaZ;
+            y_proj = decayPos.y() / CLHEP::m + nuMom.getY()/nuMom.getZ() * deltaZ;
+          }
+
+          // Fill ntuple
+          // parent particle info
+          analysisManager->FillNtupleIColumn(0, parentPDG);
+          analysisManager->FillNtupleDColumn(1, parentMom.getX()/CLHEP::GeV);
+          analysisManager->FillNtupleDColumn(2, parentMom.getY()/CLHEP::GeV);
+          analysisManager->FillNtupleDColumn(3, parentMom.getZ()/CLHEP::GeV);
+          analysisManager->FillNtupleDColumn(4, parentE/CLHEP::GeV);
+          analysisManager->FillNtupleDColumn(5, decayPos.getX()/CLHEP::m);
+          analysisManager->FillNtupleDColumn(6, decayPos.getY()/CLHEP::m);
+          analysisManager->FillNtupleDColumn(7, decayPos.getZ()/CLHEP::m);
+          // neutrino info
+          analysisManager->FillNtupleIColumn(8, secPDG);
+          analysisManager->FillNtupleDColumn(9, secTrack->GetTotalEnergy()/CLHEP::GeV);
+          analysisManager->FillNtupleDColumn(10, nuMom.getX()/CLHEP::GeV);
+          analysisManager->FillNtupleDColumn(11, nuMom.getY()/CLHEP::GeV);
+          analysisManager->FillNtupleDColumn(12, nuMom.getZ()/CLHEP::GeV);
+          analysisManager->FillNtupleDColumn(13, x_proj);
+          analysisManager->FillNtupleDColumn(14, y_proj);
+          analysisManager->AddNtupleRow();
+        }
       }
+
     }
 
-    /*
-    const std::vector<const G4Track*>* secondaries = step->GetSecondaryInCurrentStep();
-    for( size_t lp = 0; lp < (*secondaries).size(); lp++ )
-    {
-        analysisManager->FillNtupleSColumn(0, (*secondaries)[lp]->GetDefinition()->GetParticleName());
-        analysisManager->FillNtupleSColumn(1, (*secondaries)[lp]->GetCreatorProcess()->GetProcessName());
-        analysisManager->FillNtupleDColumn(2, (*secondaries)[lp]->GetKineticEnergy()/CLHEP::GeV);
-        analysisManager->FillNtupleDColumn(3, (*secondaries)[lp]->GetTotalEnergy()/CLHEP::GeV);
-        analysisManager->FillNtupleDColumn(4, (*secondaries)[lp]->GetMomentum().getX()/CLHEP::GeV);
-        analysisManager->FillNtupleDColumn(5, (*secondaries)[lp]->GetMomentum().getY()/CLHEP::GeV);
-        analysisManager->FillNtupleDColumn(6, (*secondaries)[lp]->GetMomentum().getZ()/CLHEP::GeV);
-        analysisManager->FillNtupleDColumn(7, (*secondaries)[lp]->GetPosition().getX()/CLHEP::cm);
-        analysisManager->FillNtupleDColumn(8, (*secondaries)[lp]->GetPosition().getY()/CLHEP::cm);
-        analysisManager->FillNtupleDColumn(9, (*secondaries)[lp]->GetPosition().getZ()/CLHEP::cm);
-        analysisManager->AddNtupleRow();
-    }
-        */
+
+
+
 }
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......

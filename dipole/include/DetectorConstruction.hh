@@ -28,6 +28,7 @@ public:
   SimpleHornMagneticField* GetHornAMagneticField() { return fMagFieldA; }
   SimpleHornMagneticField* GetHornBMagneticField() { return fMagFieldB; }
   SimpleHornMagneticField* GetHornCMagneticField() { return fMagFieldC; }
+  void SetDipoleBField(G4double val) { fBFieldVal = val; }
 
 private:
   // Helper functions
@@ -47,6 +48,7 @@ private:
   G4FieldManager* fFieldMgrA;
   G4FieldManager* fFieldMgrB;
   G4FieldManager* fFieldMgrC;
+  G4double fBFieldVal;
 
   // 볼륨 멤버 변수 (필요시 사용)
   G4LogicalVolume* logicInnerCondA;

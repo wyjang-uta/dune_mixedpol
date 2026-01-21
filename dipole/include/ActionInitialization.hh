@@ -49,6 +49,7 @@ class ActionInitialization : public G4VUserActionInitialization
 
   private:
     G4String fFileName;
+
 };
 
 }  // namespace B1

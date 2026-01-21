@@ -30,12 +30,11 @@
 #ifndef B1RunAction_h
 #define B1RunAction_h 1
 
+#include "G4String.hh"
 #include "G4UserRunAction.hh"
 
 #include "G4Accumulable.hh"
 #include "globals.hh"
-
-#include "G4String.hh"
 
 class G4Run;
 
@@ -58,7 +57,7 @@ class RunAction : public G4UserRunAction
     void EndOfRunAction(const G4Run*) override;
 
   private:
-    G4String fFileName;
+    G4String fOutputName;
 };
 
 }  // namespace B1

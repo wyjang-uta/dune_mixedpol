@@ -39,7 +39,6 @@
 #include "G4Run.hh"
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
-#include "G4String.hh"
 #include "G4UnitsTable.hh"
 #include "G4Version.hh"
 #if G4VERSION_NUMBER >= 1100
@@ -54,7 +53,8 @@ namespace B1
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 RunAction::RunAction(G4String fileName)
-  : G4UserRunAction(), fFileName(fileName)
+  : G4UserRunAction(),
+    fOutputName(fileName)
 {
 }
 
@@ -71,19 +71,24 @@ void RunAction::BeginOfRunAction(const G4Run*)
 
   analysisManager->SetNtupleMerging(true);
   analysisManager->SetVerboseLevel(1);
-  analysisManager->SetFileName(fFileName);
+  analysisManager->SetFileName(fOutputName);
   analysisManager->OpenFile();
-  analysisManager->CreateNtuple("DipoleReflector", "DUNE Dipole Reflector Sim");
-  analysisManager->CreateNtupleSColumn("particleName");
-  analysisManager->CreateNtupleSColumn("processName");
-  analysisManager->CreateNtupleDColumn("kineticEnergy");
-  analysisManager->CreateNtupleDColumn("totalEnergy");
-  analysisManager->CreateNtupleDColumn("px");
-  analysisManager->CreateNtupleDColumn("py");
-  analysisManager->CreateNtupleDColumn("pz");
-  analysisManager->CreateNtupleDColumn("x");
-  analysisManager->CreateNtupleDColumn("y");
-  analysisManager->CreateNtupleDColumn("z");
+  analysisManager->CreateNtuple("DipoleDefocus", "Dipole Defocus Simulation");
+  analysisManager->CreateNtupleIColumn("parentPDG");
+  analysisManager->CreateNtupleDColumn("parentPx");
+  analysisManager->CreateNtupleDColumn("parentPy");
+  analysisManager->CreateNtupleDColumn("parentPz");
+  analysisManager->CreateNtupleDColumn("parentE");
+  analysisManager->CreateNtupleDColumn("vertexX");
+  analysisManager->CreateNtupleDColumn("vertexY");
+  analysisManager->CreateNtupleDColumn("vertexZ");
+  analysisManager->CreateNtupleIColumn("daughterPDG");
+  analysisManager->CreateNtupleDColumn("daughterE");
+  analysisManager->CreateNtupleDColumn("daughterPx");
+  analysisManager->CreateNtupleDColumn("daughterPy");
+  analysisManager->CreateNtupleDColumn("daughterPz");
+  analysisManager->CreateNtupleDColumn("projXat574m");
+  analysisManager->CreateNtupleDColumn("projYat574m");
   analysisManager->FinishNtuple();
 }
 

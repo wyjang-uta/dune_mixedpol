@@ -29,7 +29,6 @@
 
 #include "ActionInitialization.hh"
 #include "DetectorConstruction.hh"
-#include "QBBC.hh"
 #include "FTFP_BERT.hh"
 
 #include "G4Version.hh"
@@ -43,6 +42,7 @@
   #endif
 #endif
 
+#include "G4SystemOfUnits.hh"
 #include "G4SteppingVerbose.hh"
 #include "G4UIExecutive.hh"
 #include "G4UImanager.hh"
@@ -63,17 +63,20 @@ int main(int argc, char** argv)
     ui = new G4UIExecutive(argc, argv);
   }
 
-  G4String outputFileName = "DefaultOutput.root";
-  if( argc >= 3 ) {
-    outputFileName = argv[2];
+  // Default arguments
+  G4double Bmag = 3.0 * tesla;
+  G4long mySeed = 1234;
+  G4String fileName = "output.root";
+  // Parse arguments (ex: ./exampleB1 run1.mac 1.5 1234 /exp/dune/data/users/wyjang/dune_mixedpol/dipole/result_1.5.root)
+  if( argc >= 5 ) {
+    Bmag = std::stod(argv[2]) * tesla;
+    mySeed = std::stol(argv[3]);
+    fileName = argv[4];
   }
 
+  // Optionally: choose a different Random engine...
   G4Random::setTheEngine(new CLHEP::MTwistEngine);
-  long seed = 12345;
-  if( argc >= 4 ) {
-    seed = std::atol(argv[3]);
-  }
-  G4Random::setTheSeed(seed);
+  G4Random::setTheSeed(mySeed);
 
   // use G4SteppingVerboseWithUnits
   //G4int precision = 4;
@@ -94,7 +97,9 @@ int main(int argc, char** argv)
   // Set mandatory initialization classes
   //
   // Detector construction
-  runManager->SetUserInitialization(new DetectorConstruction());
+  auto* detector = new DetectorConstruction();
+  detector->SetDipoleBField(Bmag);
+  runManager->SetUserInitialization(detector);
 
   // Physics list
   auto physicsList = new FTFP_BERT;
@@ -102,7 +107,7 @@ int main(int argc, char** argv)
   runManager->SetUserInitialization(physicsList);
 
   // User action initialization
-  runManager->SetUserInitialization(new ActionInitialization(outputFileName));
+  runManager->SetUserInitialization(new ActionInitialization(fileName));
 
   // Initialize visualization with the default graphics system
   G4VisManager* visManager = new G4VisExecutive;
