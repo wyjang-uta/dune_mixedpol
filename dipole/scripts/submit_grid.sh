@@ -3,14 +3,15 @@
 # Submit a job to the grid
 
 BASE_APP_DIR="/exp/dune/app/users/wyjang"
-BASE_DATA_DIR="/exp/dune/data/users/wyjang"
+#BASE_DATA_DIR="/exp/dune/data/users/wyjang"
+BASE_DATA_DIR="/pnfs/dune/scratch/users/wyjang/dune_mixedpol/dipole"
 
 EXE_PATH="$BASE_APP_DIR/bin/dipole_defocus"
 MACRO_FILE="$BASE_APP_DIR/share/dune_mixedpol/dipole/macros/run1.mac"
 OUTPUT_DATA_DIR="$BASE_DATA_DIR/dune_mixedpol/dipole"
 MAG_FIELD=3.0
 
-mkdir -p $OUTPUT_DATA_DIR
+ifdh mkdir_p $OUTPUT_DATA_DIR
 for RUN_NUM in {1..1}
 do
     SEED=$((RUN_NUM+1000))
@@ -24,8 +25,8 @@ do
     --expected-lifetime=8h \
     --group=dune \
     --resource-provides=usage_model=OPPORTUNISTIC,DEDICATED \
-    -f $EXE_PATH \
-    -f $MACRO_FILE \
+    -f dropbox://$EXE_PATH \
+    -f dropbox://$MACRO_FILE \
     file:///exp/dune/app/users/wyjang/share/dune_mixedpol/dipole/scripts/agent.sh \
     $MAG_FIELD $SEED $OUTPUT_FILE $OUTPUT_DATA_DIR
 
