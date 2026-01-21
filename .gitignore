@@ -14,3 +14,10 @@ dipole/build/exampleB1
 dipole/build/myoutput.root
 dipole/build/output.root
 dipole/build/run1.mac
+dipole/build/
+exampleB1
+*.o
+*.out
+*.root
+*.rndm
+.vscode/
