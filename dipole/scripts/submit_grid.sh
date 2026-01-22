@@ -12,12 +12,12 @@ OUTPUT_DATA_DIR="$BASE_DATA_DIR/dune_mixedpol/dipole"
 MAG_FIELD=3.0
 
 ifdh mkdir_p $OUTPUT_DATA_DIR
-for RUN_NUM in {1..1}
+for RUN_NUM in {1..100}
 do
-    SEED=$((RUN_NUM+1000))
+    SEED=$((RUN_NUM))
     OUTPUT_FILE="result_${RUN_NUM}_${SEED}_${MAG_FIELD}.root"
 
-    echo "Submitting Run $RUN_NUM with seed $SEED ... "
+    echo "Submitting Run $RUN_NUM with seed $SEED ..."
 
     jobsub_submit -N 1 \
     --memory=2000MB \

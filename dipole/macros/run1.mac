@@ -20,4 +20,4 @@
 /gun/energy 120 GeV
 /tracking/verbose 0
 #
-/run/beamOn 1000
+/run/beamOn 100000
