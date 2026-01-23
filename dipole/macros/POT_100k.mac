@@ -1,0 +1,23 @@
+# Macro file for example B1
+# 
+# Can be run in batch, without graphic
+# or interactively: Idle> /control/execute run1.mac
+#
+# Change the default number of workers (in multi-threading mode) 
+#/run/numberOfThreads 4
+#
+# Initialize kernel
+/run/initialize
+#
+/control/verbose 0
+/run/verbose 2
+/event/verbose 0
+/tracking/verbose 0
+# 
+# proton 120 GeV to the direction (0.,0.,1.) for DUNE configuration
+#
+/gun/particle proton
+/gun/energy 120 GeV
+/tracking/verbose 0
+#
+/run/beamOn 100000
