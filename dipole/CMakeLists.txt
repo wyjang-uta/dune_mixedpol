@@ -4,6 +4,14 @@
 cmake_minimum_required(VERSION 3.16...3.27)
 project(mirage)
 
+#----------------------------------------------------------------------------
+# 1. Installation Path Setup
+#----------------------------------------------------------------------------
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "/exp/dune/app/users/wyjang" CACHE PATH "..." FORCE)
+endif()
+set(SHARE_DIR "share/dune/mirage/dipole")
+
 # settings for dunegpvm spack environment
 set(EXPAT_INCLUDE_DIR "/usr/include")
 set(EXPAT_LIBRARY "/usr/lib64/libexpat.so")
@@ -35,6 +43,7 @@ target_link_libraries(mirage PRIVATE ${Geant4_LIBRARIES})
 #
 set(MIRAGE_MACROS
   macros/init_vis.mac
+  macros/POT_100k.mac
   macros/run1.mac
   macros/run2.mac
   macros/vis.mac
@@ -61,11 +70,6 @@ foreach(_macro ${MIRAGE_MACROS})
   )
 endforeach()
 
-# 1. configure install path
-if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  set(CMAKE_INSTALL_PREFIX "/exp/dune/app/users/wyjang" CACHE PATH "..." FORCE)
-endif()
-set(SHARE_DIR "share/dune_mixedpol/dipole")
 
 # 2. installation of binary files
 install(TARGETS mirage DESTINATION bin)
