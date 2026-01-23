@@ -8,8 +8,8 @@ NSUBRUNS=100
 
 BASE_APP_DIR="/exp/dune/app/users/wyjang"
 EXE_FILE="$BASE_APP_DIR/bin/dipole_defocus"
-MACRO_FILE="$BASE_APP_DIR/share/dune_mixedpol/dipole/macros/POT_100k.mac"
-OUTPUT_DATA_DIR="$BASE_DATA_DIR/dune_mixedpol/dipole/run${RUN_NUM}"
+MACRO_FILE="$BASE_APP_DIR/share/dune/mirage/dipole/macros/POT_100k.mac"
+OUTPUT_DATA_DIR="$BASE_DATA_DIR/dune/mirage/dipole/run${RUN_NUM}"
 
 ifdh mkdir_p $OUTPUT_DATA_DIR
 OUTPUT_FILE="result_${RUN_NUM}_${SEED}_${MAG_FIELD}.root"
@@ -44,5 +44,5 @@ jobsub_submit -N $NSUBRUNS \
     --group=dune \
     --resource-provides=usage_model=OPPORTUNISTIC,DEDICATED \
     --tar_file_name dropbox://$(pwd)/$ASSET_FILE_NAME
-    file:///exp/dune/app/users/wyjang/share/dune_mixedpol/dipole/scripts/agent.sh \
+    file:///exp/dune/app/users/wyjang/share/dune/mirage/dipole/scripts/agent.sh \
     $MAG_FIELD $RUN_NUM $NSUBRUNS
