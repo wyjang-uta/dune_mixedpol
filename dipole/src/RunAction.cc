@@ -73,7 +73,7 @@ void RunAction::BeginOfRunAction(const G4Run*)
   analysisManager->SetVerboseLevel(1);
   analysisManager->SetFileName(fOutputName);
   analysisManager->OpenFile();
-  analysisManager->CreateNtuple("DipoleDefocus", "Dipole Defocus Simulation");
+  analysisManager->CreateNtuple("mirage", "MIRAGE simulation TTree");
   analysisManager->CreateNtupleIColumn("parentPDG");
   analysisManager->CreateNtupleDColumn("parentPx");
   analysisManager->CreateNtupleDColumn("parentPy");
