@@ -80,8 +80,8 @@ void DetectorConstruction::ConstructWorld(G4VPhysicalVolume*& physWorld)
 
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_Galactic");
 
-  G4double world_size_xy = 20.0 * m;
-  G4double world_size_z = 300.0 * m;
+  G4double world_size_xy = 100.0 * m;
+  G4double world_size_z  = 300.0 * m;
   G4Box* solidWorld = new G4Box("SolidWorld",
                                 0.5 * world_size_xy,
                                 0.5 * world_size_xy,
