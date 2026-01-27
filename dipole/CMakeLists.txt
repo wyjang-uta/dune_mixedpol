@@ -44,6 +44,7 @@ target_link_libraries(mirage PRIVATE ${Geant4_LIBRARIES})
 set(MIRAGE_MACROS
   macros/init_vis.mac
   macros/POT_100k.mac
+  macros/POT_1000k.mac
   macros/run1.mac
   macros/run2.mac
   macros/vis.mac
