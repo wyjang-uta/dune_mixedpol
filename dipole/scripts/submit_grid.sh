@@ -5,12 +5,13 @@ RUN_NUM=2
 NSUBRUNS=100
 
 # Submit a job to the grid
-BASE_APP_DIR="/exp/dune/app/users/wyjang"
-BASE_DATA_DIR="/pnfs/dune/scratch/users/wyjang/dune/mirage/dipole/run${RUN_NUM}"
+BASE_APP_DIR="/exp/dune/app/users/${USER}"
+BASE_DATA_DIR="/pnfs/dune/scratch/users/${USER}/dune/mirage/dipole/run${RUN_NUM}"
 EXE_FILE="$BASE_APP_DIR/bin/mirage"
 MACRO_FILE="$BASE_APP_DIR/share/dune/mirage/dipole/macros/POT_100k.mac"
 OUTPUT_DATA_DIR="$BASE_DATA_DIR/run${RUN_NUM}"
 
+# Ensure output directory exists, create if it doesn't
 ifdh ls $OUTPUT_DATA_DIR >/dev/null 2>&1 || ifdh mkdir_p $OUTPUT_DATA_DIR
 OUTPUT_FILE="result_${RUN_NUM}_${SEED}_${MAG_FIELD}.root"
 
@@ -47,5 +48,5 @@ jobsub_submit -N $NSUBRUNS \
     --resource-provides=usage_model=OPPORTUNISTIC,DEDICATED \
     -f dropbox://$EXE_FILE \
     -f dropbox://$MACRO_FILE \
-    file:///exp/dune/app/users/wyjang/share/dune/mirage/dipole/scripts/agent.sh \
-    mirage POT_100k.mac $MAG_FIELD $RUN_NUM $NSUBRUNS $BASE_DATA_DIR
+    file:///exp/dune/app/users/${USER}/share/dune/mirage/dipole/scripts/agent.sh \
+    $(basename $EXE_FILE) $(basename $MACRO_FILE) $MAG_FIELD $RUN_NUM $NSUBRUNS $BASE_DATA_DIR
