@@ -83,15 +83,15 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         //if( G4StrUtil::contains(partName, "nu") || G4StrUtil::contains(partName,"anti_nu") ) {
         if( partName.contains("nu") || partName.contains("anti_nu") ) {
           G4ThreeVector nuMom = secTrack->GetMomentum();
-          G4double x_proj = -9999.0 / CLHEP::m;
-          G4double y_proj = -9999.0 / CLHEP::m;
+          G4double x_proj = -9999.0 * CLHEP::m;
+          G4double y_proj = -9999.0 * CLHEP::m;
 
           // Calculate projection at 574 m
           if( nuMom.getZ() > 0.0) {
-            G4double z_target = 574.0 * CLHEP::m + 1.5 * CLHEP::m;
-            G4double deltaZ = z_target - decayPos.z() / CLHEP::m;
-            x_proj = decayPos.x() / CLHEP::m + nuMom.getX()/nuMom.getZ() * deltaZ;
-            y_proj = decayPos.y() / CLHEP::m + nuMom.getY()/nuMom.getZ() * deltaZ;
+            G4double z_target = (574.0 - 150.0) * CLHEP::m; // WARNING! world center coordinate <-> DUNE MCzero coorinate tranformation is hardcoded here.
+            G4double deltaZ = z_target - decayPos.z();
+            x_proj = decayPos.x() + nuMom.getX()/nuMom.getZ() * deltaZ;
+            y_proj = decayPos.y() + nuMom.getY()/nuMom.getZ() * deltaZ;
           }
 
           // Fill ntuple
@@ -110,8 +110,8 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
           analysisManager->FillNtupleDColumn(10, nuMom.getX()/CLHEP::GeV);
           analysisManager->FillNtupleDColumn(11, nuMom.getY()/CLHEP::GeV);
           analysisManager->FillNtupleDColumn(12, nuMom.getZ()/CLHEP::GeV);
-          analysisManager->FillNtupleDColumn(13, x_proj);
-          analysisManager->FillNtupleDColumn(14, y_proj);
+          analysisManager->FillNtupleDColumn(13, x_proj/CLHEP::m);
+          analysisManager->FillNtupleDColumn(14, y_proj/CLHEP::m);
           analysisManager->AddNtupleRow();
         }
       }
