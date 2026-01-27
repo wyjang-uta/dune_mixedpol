@@ -36,6 +36,9 @@
 #include "G4VProcess.hh"
 #include "G4Track.hh"
 
+#include "G4TransportationManager.hh"
+#include "G4Box.hh"
+
 #include "G4PionPlus.hh"
 #include "G4PionMinus.hh"
 #include "G4KaonPlus.hh"
@@ -63,6 +66,12 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
     G4StepPoint* postPoint = step->GetPostStepPoint();
 
+    G4VPhysicalVolume* worldPV = G4TransportationManager::GetTransportationManager()
+                                    ->GetNavigatorForTracking()
+                                    ->GetWorldVolume();
+    G4Box* worldBox = dynamic_cast<G4Box*>(worldPV->GetLogicalVolume()->GetSolid());
+    G4double worldHalfZ = worldBox->GetZHalfLength();
+
     // Find out parent particle that produces neutrinos
     if( postPoint->GetProcessDefinedStep() &&
         postPoint->GetProcessDefinedStep()->GetProcessName() == "Decay" )
@@ -88,7 +97,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
 
           // Calculate projection at 574 m
           if( nuMom.getZ() > 0.0) {
-            G4double z_target = (574.0 - 150.0) * CLHEP::m; // WARNING! world center coordinate <-> DUNE MCzero coorinate tranformation is hardcoded here.
+            G4double z_target = (574.0 - worldHalfZ) * CLHEP::m;
             G4double deltaZ = z_target - decayPos.z();
             x_proj = decayPos.x() + nuMom.getX()/nuMom.getZ() * deltaZ;
             y_proj = decayPos.y() + nuMom.getY()/nuMom.getZ() * deltaZ;
