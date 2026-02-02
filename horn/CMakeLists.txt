@@ -5,6 +5,18 @@ cmake_minimum_required(VERSION 3.16...3.27)
 project(mirage_horn)
 
 #----------------------------------------------------------------------------
+# 1. Installation Path Setup
+#----------------------------------------------------------------------------
+if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  set(CMAKE_INSTALL_PREFIX "/exp/dune/app/users/wyjang" CACHE PATH "..." FORCE)
+endif()
+set(SHARE_DIR "share/dune/mirage/horn")
+
+# settings for dunegpvm spack environment
+set(EXPAT_INCLUDE_DIR "/usr/include")
+set(EXPAT_LIBRARY "/usr/lib64/libexpat.so")
+
+#----------------------------------------------------------------------------
 # Find Geant4 package, activating all available UI and Vis drivers by default
 # See the documentation for a guide on how to enable/disable specific components
 #
