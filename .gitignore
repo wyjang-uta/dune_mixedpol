@@ -31,3 +31,14 @@ exampleB1
 *.root
 *.rndm
 .vscode/
+build/CMakeCache.txt
+build/.cmake/api/v1/query/client-vscode/query.json
+build/CMakeFiles/cmake.check_cache
+build/CMakeFiles/CMakeConfigureLog.yaml
+build/CMakeFiles/3.26.5/CMakeCCompiler.cmake
+build/CMakeFiles/3.26.5/CMakeCXXCompiler.cmake
+build/CMakeFiles/3.26.5/CMakeDetermineCompilerABI_C.bin
+build/CMakeFiles/3.26.5/CMakeDetermineCompilerABI_CXX.bin
+build/CMakeFiles/3.26.5/CMakeSystem.cmake
+build/CMakeFiles/3.26.5/CompilerIdC/CMakeCCompilerId.c
+build/CMakeFiles/3.26.5/CompilerIdCXX/CMakeCXXCompilerId.cpp
