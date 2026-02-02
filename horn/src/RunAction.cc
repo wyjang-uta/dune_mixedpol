@@ -24,8 +24,8 @@
 // ********************************************************************
 //
 //
-/// \file B1/src/RunAction.cc
-/// \brief Implementation of the B1::RunAction class
+/// \file mirage_horn/src/RunAction.cc
+/// \brief Implementation of the mirage_horn::RunAction class
 
 #include "RunAction.hh"
 
@@ -40,14 +40,21 @@
 #include "G4RunManager.hh"
 #include "G4SystemOfUnits.hh"
 #include "G4UnitsTable.hh"
-#include "G4AnalysisManager.hh"
+#include "G4Version.hh"
+#if G4VERSION_NUMBER >= 1100
+  #include "G4AnalysisManager.hh"
+#else
+  #include "g4root.hh"
+#endif
 
-namespace B1
+namespace mirage_horn
 {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-RunAction::RunAction()
+RunAction::RunAction(G4String fileName)
+  : G4UserRunAction(),
+    fOutputName(fileName)
 {
 }
 
@@ -64,19 +71,24 @@ void RunAction::BeginOfRunAction(const G4Run*)
 
   analysisManager->SetNtupleMerging(true);
   analysisManager->SetVerboseLevel(1);
-  analysisManager->SetFileName("MyFocusHorn.root");
+  analysisManager->SetFileName(fOutputName);
   analysisManager->OpenFile();
-  analysisManager->CreateNtuple("MyFocusHorn", "Focus Horn Simulation");
-  analysisManager->CreateNtupleSColumn("particleName");
-  analysisManager->CreateNtupleSColumn("processName");
-  analysisManager->CreateNtupleDColumn("kineticEnergy");
-  analysisManager->CreateNtupleDColumn("totalEnergy");
-  analysisManager->CreateNtupleDColumn("px");
-  analysisManager->CreateNtupleDColumn("py");
-  analysisManager->CreateNtupleDColumn("pz");
-  analysisManager->CreateNtupleDColumn("x");
-  analysisManager->CreateNtupleDColumn("y");
-  analysisManager->CreateNtupleDColumn("z");
+  analysisManager->CreateNtuple("mirage", "MIRAGE simulation TTree");
+  analysisManager->CreateNtupleIColumn("parentPDG");
+  analysisManager->CreateNtupleDColumn("parentPx");
+  analysisManager->CreateNtupleDColumn("parentPy");
+  analysisManager->CreateNtupleDColumn("parentPz");
+  analysisManager->CreateNtupleDColumn("parentE");
+  analysisManager->CreateNtupleDColumn("vertexX");
+  analysisManager->CreateNtupleDColumn("vertexY");
+  analysisManager->CreateNtupleDColumn("vertexZ");
+  analysisManager->CreateNtupleIColumn("daughterPDG");
+  analysisManager->CreateNtupleDColumn("daughterE");
+  analysisManager->CreateNtupleDColumn("daughterPx");
+  analysisManager->CreateNtupleDColumn("daughterPy");
+  analysisManager->CreateNtupleDColumn("daughterPz");
+  analysisManager->CreateNtupleDColumn("projXat574m");
+  analysisManager->CreateNtupleDColumn("projYat574m");
   analysisManager->FinishNtuple();
 }
 
@@ -108,4 +120,4 @@ void RunAction::EndOfRunAction(const G4Run* run)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-}  // namespace B1
+}  // namespace mirage_horn

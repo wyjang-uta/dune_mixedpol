@@ -24,8 +24,8 @@
 // ********************************************************************
 //
 //
-/// \file B1/src/ActionInitialization.cc
-/// \brief Implementation of the B1::ActionInitialization class
+/// \file mirage_horn/src/ActionInitialization.cc
+/// \brief Implementation of the mirage_horn::ActionInitialization class
 
 #include "ActionInitialization.hh"
 
@@ -34,14 +34,22 @@
 #include "RunAction.hh"
 #include "SteppingAction.hh"
 
-namespace B1
+namespace mirage_horn
 {
+
+//....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
+
+ActionInitialization::ActionInitialization(G4String fileName)
+  : G4VUserActionInitialization(),
+    fFileName(fileName)
+{
+}
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
 void ActionInitialization::BuildForMaster() const
 {
-  auto runAction = new RunAction;
+  auto runAction = new RunAction(fFileName);
   SetUserAction(runAction);
 }
 
@@ -51,7 +59,7 @@ void ActionInitialization::Build() const
 {
   SetUserAction(new PrimaryGeneratorAction);
 
-  auto runAction = new RunAction;
+  auto runAction = new RunAction(fFileName);
   SetUserAction(runAction);
 
   auto eventAction = new EventAction(runAction);
@@ -62,4 +70,4 @@ void ActionInitialization::Build() const
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-}  // namespace B1
+}  // namespace mirage_horn

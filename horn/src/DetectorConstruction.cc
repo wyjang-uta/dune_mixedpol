@@ -72,11 +72,12 @@ void DetectorConstruction::ConstructWorld(G4VPhysicalVolume*& physWorld)
 
   G4Material* world_mat = nist->FindOrBuildMaterial("G4_AIR");
 
-  G4double world_size = 50.0 * m;
+  G4double world_size_xy = 200.0 * m;
+  G4double world_size_z = 500.0 * m;
   G4Box* solidWorld = new G4Box("SolidWorld",
-                                0.5 * world_size,
-                                0.5 * world_size,
-                                0.5 * world_size);
+                                0.5 * world_size_xy,
+                                0.5 * world_size_xy,
+                                0.5 * world_size_z);
 
   G4LogicalVolume* logicWorld = new G4LogicalVolume(solidWorld,
                                                     world_mat,
@@ -93,7 +94,8 @@ void DetectorConstruction::ConstructHornA(G4LogicalVolume* logicWorld)
 {
   G4NistManager* nist = G4NistManager::Instance();
   G4Material* aluminum_mat = nist->FindOrBuildMaterial("G4_Al");
-  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_He");
+  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_Galactic");  // for a simplified simulation
+  //G4Material* helium_mat = nist->FindOrBuildMaterial("G4_He");
 
   // --- 3. 혼 파라미터 정의 ---
   G4double current = 300.0 * 1000.0 * ampere; // 300 kA (kiloampere -> 1000*ampere)

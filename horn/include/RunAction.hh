@@ -24,12 +24,13 @@
 // ********************************************************************
 //
 //
-/// \file B1/include/RunAction.hh
-/// \brief Definition of the B1::RunAction class
+/// \file mirage_horn/include/RunAction.hh
+/// \brief Definition of the mirage_horn::RunAction class
 
-#ifndef B1RunAction_h
-#define B1RunAction_h 1
+#ifndef mirage_hornRunAction_h
+#define mirage_hornRunAction_h 1
 
+#include "G4String.hh"
 #include "G4UserRunAction.hh"
 
 #include "G4Accumulable.hh"
@@ -37,7 +38,7 @@
 
 class G4Run;
 
-namespace B1
+namespace mirage_horn
 {
 
 /// Run action class
@@ -49,14 +50,16 @@ namespace B1
 class RunAction : public G4UserRunAction
 {
   public:
-    RunAction();
+    RunAction(G4String fileName);
     ~RunAction() override = default;
 
     void BeginOfRunAction(const G4Run*) override;
     void EndOfRunAction(const G4Run*) override;
 
+  private:
+    G4String fOutputName;
 };
 
-}  // namespace B1
+}  // namespace mirage_horn
 
 #endif

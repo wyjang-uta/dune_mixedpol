@@ -24,8 +24,8 @@
 // ********************************************************************
 //
 //
-/// \file B1/src/PrimaryGeneratorAction.cc
-/// \brief Implementation of the B1::PrimaryGeneratorAction class
+/// \file mirage_horn/src/PrimaryGeneratorAction.cc
+/// \brief Implementation of the mirage_horn::PrimaryGeneratorAction class
 
 #include "PrimaryGeneratorAction.hh"
 
@@ -37,7 +37,7 @@
 #include "G4SystemOfUnits.hh"
 #include "Randomize.hh"
 
-namespace B1
+namespace mirage_horn
 {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -74,4 +74,4 @@ void PrimaryGeneratorAction::GeneratePrimaries(G4Event* event)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-}  // namespace B1
+}  // namespace mirage_horn

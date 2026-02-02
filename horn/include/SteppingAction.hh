@@ -24,18 +24,18 @@
 // ********************************************************************
 //
 //
-/// \file B1/include/SteppingAction.hh
-/// \brief Definition of the B1::SteppingAction class
+/// \file mirage_horn/include/SteppingAction.hh
+/// \brief Definition of the mirage_horn::SteppingAction class
 
-#ifndef B1SteppingAction_h
-#define B1SteppingAction_h 1
+#ifndef mirage_hornSteppingAction_h
+#define mirage_hornSteppingAction_h 1
 
 #include "G4UserSteppingAction.hh"
 
 class G4LogicalVolume;
 class G4Step;
 
-namespace B1
+namespace mirage_horn
 {
 
 class EventAction;
@@ -56,7 +56,7 @@ class SteppingAction : public G4UserSteppingAction
     G4LogicalVolume* fScoringVolume = nullptr;
 };
 
-}  // namespace B1
+}  // namespace mirage_horn
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

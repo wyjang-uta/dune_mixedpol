@@ -24,15 +24,16 @@
 // ********************************************************************
 //
 //
-/// \file B1/include/ActionInitialization.hh
-/// \brief Definition of the B1::ActionInitialization class
+/// \file mirage_horn/include/ActionInitialization.hh
+/// \brief Definition of the mirage_horn::ActionInitialization class
 
-#ifndef B1ActionInitialization_h
-#define B1ActionInitialization_h 1
+#ifndef mirage_hornActionInitialization_h
+#define mirage_hornActionInitialization_h 1
 
 #include "G4VUserActionInitialization.hh"
+#include "G4String.hh"
 
-namespace B1
+namespace mirage_horn
 {
 
 /// Action initialization class.
@@ -40,14 +41,17 @@ namespace B1
 class ActionInitialization : public G4VUserActionInitialization
 {
   public:
-    ActionInitialization() = default;
+    ActionInitialization(G4String fileName);
     ~ActionInitialization() override = default;
 
     void BuildForMaster() const override;
     void Build() const override;
+
+  private:
+    G4String fFileName;
 };
 
-}  // namespace B1
+}  // namespace mirage_horn
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

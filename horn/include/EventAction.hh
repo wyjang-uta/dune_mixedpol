@@ -24,18 +24,18 @@
 // ********************************************************************
 //
 //
-/// \file B1/include/EventAction.hh
-/// \brief Definition of the B1::EventAction class
+/// \file mirage_horn/include/EventAction.hh
+/// \brief Definition of the mirage_horn::EventAction class
 
-#ifndef B1EventAction_h
-#define B1EventAction_h 1
+#ifndef mirage_hornEventAction_h
+#define mirage_hornEventAction_h 1
 
 #include "G4UserEventAction.hh"
 #include "globals.hh"
 
 class G4Event;
 
-namespace B1
+namespace mirage_horn
 {
 
 class RunAction;
@@ -55,7 +55,7 @@ class EventAction : public G4UserEventAction
     RunAction* fRunAction = nullptr;
 };
 
-}  // namespace B1
+}  // namespace mirage_horn
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 

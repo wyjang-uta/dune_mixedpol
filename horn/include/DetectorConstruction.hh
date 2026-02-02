@@ -4,7 +4,6 @@
 #include "G4VUserDetectorConstruction.hh"
 #include "globals.hh"
 
-// 전방 선언 (Forward declaration)
 class G4VPhysicalVolume;
 class G4LogicalVolume;
 class G4FieldManager;

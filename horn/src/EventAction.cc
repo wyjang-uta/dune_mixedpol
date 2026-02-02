@@ -24,14 +24,14 @@
 // ********************************************************************
 //
 //
-/// \file B1/src/EventAction.cc
-/// \brief Implementation of the B1::EventAction class
+/// \file mirage_horn/src/EventAction.cc
+/// \brief Implementation of the mirage_horn::EventAction class
 
 #include "EventAction.hh"
 
 #include "RunAction.hh"
 
-namespace B1
+namespace mirage_horn
 {
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
@@ -52,4 +52,4 @@ void EventAction::EndOfEventAction(const G4Event*)
 
 //....oooOO0OOooo........oooOO0OOooo........oooOO0OOooo........oooOO0OOooo......
 
-}  // namespace B1
+}  // namespace mirage_horn
