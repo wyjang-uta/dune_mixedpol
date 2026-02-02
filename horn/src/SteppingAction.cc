@@ -37,6 +37,14 @@
 #include "G4RunManager.hh"
 #include "G4Step.hh"
 
+#include "G4TransportationManager.hh"
+#include "G4Box.hh"
+
+#include "G4PionPlus.hh"
+#include "G4PionMinus.hh"
+#include "G4KaonPlus.hh"
+#include "G4KaonMinus.hh"
+
 #include "G4Version.hh"
 #if G4VERSION_NUMBER >= 1100
     #include "G4AnalysisManager.hh"
