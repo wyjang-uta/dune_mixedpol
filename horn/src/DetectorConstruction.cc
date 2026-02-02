@@ -246,7 +246,8 @@ void DetectorConstruction::ConstructHornB(G4LogicalVolume* logicWorld)
 {
   G4NistManager* nist = G4NistManager::Instance();
   G4Material* aluminum_mat = nist->FindOrBuildMaterial("G4_Al");
-  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_He");
+  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_Galactic");
+  //G4Material* helium_mat = nist->FindOrBuildMaterial("G4_He");
 
   // --- 3. 혼 파라미터 정의 ---
   G4double current = 300.0 * 1000.0 * ampere; // 300 kA (kiloampere -> 1000*ampere)
@@ -381,7 +382,8 @@ void DetectorConstruction::ConstructHornC(G4LogicalVolume* logicWorld)
   // 혼 C 지오메트리 및 자기장 생성 코드 (유사하게 작성)
   G4NistManager* nist = G4NistManager::Instance();
   G4Material* aluminum_mat = nist->FindOrBuildMaterial("G4_Al");
-  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_He");
+  G4Material* helium_mat = nist->FindOrBuildMaterial("G4_Galactic");
+  //G4Material* helium_mat = nist->FindOrBuildMaterial("G4_He");
 
   // --- 3. 혼 파라미터 정의 ---
   G4double current = 300.0 * 1000.0 * ampere; // 300 kA (kiloampere -> 1000*ampere)
