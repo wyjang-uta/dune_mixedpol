@@ -78,7 +78,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
     if( postPoint->GetProcessDefinedStep() &&
         postPoint->GetProcessDefinedStep()->GetProcessName() == "Decay" )
     {
-        const std::vector<const G4Track*.* secondaries = step->GetSecondaryInCurrentStep();
+        const std::vector<const G4Track*>* secondaries = step->GetSecondaryInCurrentStep();
 
         // Parent particle info
         G4int parentPDG = track->GetDefinition()->GetPDGEncoding();
@@ -86,7 +86,7 @@ void SteppingAction::UserSteppingAction(const G4Step* step)
         G4double parentE = track->GetTotalEnergy();
         G4ThreeVector decayPos = track->GetPosition();
 
-        for( size_t = 0; i < secondaries->size(); ++i ) {
+        for( size_t i = 0; i < secondaries->size(); ++i ) {
             const G4Track* secTrack = (*secondaries)[i];
             G4int secPDG = secTrack->GetDefinition()->GetPDGEncoding();
             G4String partName = secTrack->GetDefinition()->GetParticleName();
