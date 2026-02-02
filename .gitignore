@@ -15,6 +15,16 @@ dipole/build/myoutput.root
 dipole/build/output.root
 dipole/build/run1.mac
 dipole/build/
+horn/build/CMakeFiles/exampleB1.dir/src/DetectorConstruction.cc.o
+horn/build/CMakeFiles/exampleB1.dir/src/DetectorConstruction.cc.o.d
+horn/build/CMakeFiles/exampleB1.dir/src/EventAction.cc.o.d
+horn/build/CMakeFiles/exampleB1.dir/src/PrimaryGeneratorAction.cc.o
+horn/build/CMakeFiles/exampleB1.dir/src/RunAction.cc.o
+horn/build/CMakeFiles/exampleB1.dir/src/RunAction.cc.o.d
+horn/build/CMakeFiles/exampleB1.dir/src/SteppingAction.cc.o
+horn/build/CMakeFiles/
+horn/build/run1.mac
+horn/build/
 exampleB1
 *.o
 *.out
